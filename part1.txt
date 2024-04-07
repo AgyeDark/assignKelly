@@ -1,0 +1,74 @@
+Assignment, 06/04/24
+Agyei Darko Kelvin
+
+What is JWT and how does it work ?
+JWTs or JSON Web Tokens are most commonly used to identify an authenticated user. They are issued by an authentication server and are consumed by the client-server (to secure its APIs).
+
+How JWT works
+•	A user signs in with their credentials (email and password) to the web application and send to the server
+•	Upon successful authentication, the server generates a JSON token for the user and the authentication session. The server sends the token to the client for verification.
+•	The client stores the token, usually in a cookie and includes it in subsequent requests to the server.
+•	When the client sends a request to the application server, it verifies the signature in the token.
+•	If the JWT is valid and the user can access the requested resource.
+•	When the JWT expires, the client must obtain a new JWT by logging in again.
+
+
+Explain the difference between cookies and tokens in web development. 
+Cookies are chunks of data created by the server and sent to the client for communication purposes. Tokens, usually referring to JSON Web Tokens (JWTs), are signed credentials encoded into a long string of characters created by the server.
+
+How can you secure JWT tokens from being tampered with or decoded?
+•	You should make sure that you don't put any valuable information about your API in the token
+•	Maintain a database of “revoked tokens” and check it for every request. If the token is found to be revoked, the user is denied access to the desired resource.
+•	don’t store a JWT in localStorage (or sessionStorage)
+
+What are the advantages of using JWT over traditional session - based authentication?
+Scalability: Due to their stateless nature, JWTs are ideal for distributed systems.
+Flexibility: They can be used across different domains and applications.
+Security: When properly implemented, they provide a secure way to handle user authentication.
+
+How does the concept of statelessness apply to JWT authentication?
+JSON web tokens are stateless because claims are stored client-side, rather than in the server’s memory.
+Authentication can occur locally, instead of per request, where requests have to go through the server’s database, or similar locations. This means that a user can be authenticated multiple times without having to communicate with the site or app’s database, and without using up a lot of its resources in the process.
+
+What are the common security risks associated with using cookies for authentication?
+The main problem with cookies is that websites can’t distinguish if requests come from the actual user or someone else.
+Cross-Site Scripting.
+Cookie Capturing; If a website allows for cookies to be sent using cleartext, which is unsecured, an attacker could potentially eavesdrop on network traffic to capture the unsecured cookie
+Cookie Tossing Attack: if there’s more than one cookie, the browser will randomly pick which one to use.
+How can you implement token - based authentication in a Node.js Express server?
+
+NB: Assuming Node.js is installed locally
+
+Step 1: generating a token
+a.	first run an npm install jsonwebtoken in the terminal
+b.	in the root file(server.js), import into the files – const jwt = require(‘’ jsonwebtoken’’)
+c.	generate a token secret by running this in a node REPL - require('crypto').randomBytes(64).toString('hex') and store this secret in the project’s .env file (TOKEN_SECRET ) 
+d.	To bring this token into a Node.js file and to use it, you have to install and import dotenv:
+  		npm install dotenv  => 
+  		
+const dotenv = require('dotenv')
+		dotenv.config()
+		process.env.TOKEN_SECRET
+
+e.	how long until the token will be invalid.
+function generateAccessToken(username) {
+  return jwt.sign(username, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+}
+Explain the process of token validation in a Node.js Express server.
+A user wants to log into a website
+A user supplies their email address and password to the website (their credentials)
+The website generates a token for the user
+The user’s browser stores the token
+When the user makes subsequent requests to the website, their token will be sent along with their request
+The website will validate the token and use it to figure out who the user is.
+
+How can you handle token expiration and renewal in a Node.js Express server?
+a.	Using express to create a nodejs server, create a config file
+b.	Create a server and add routes
+c.	Add a middleware code that always executes and checks if the token coming to the api is valid or not
+d.	Test the code with any api testing tool (postman) 
+Discuss the best practices for storing and managing JWT tokens securely in a web application
+a. avoid storing tokens in a localStorage of the web browser
+b. avoid storing tokens in a session storage, ession storage is accessible by any javascript code running on the same port that the api is hosted
+c. the browser memory can be used to store tokens, although users will have to login frequently
+d. tokens can be stored in cookies
